@@ -20,15 +20,13 @@ urlpatterns = [
 
     path('logout/',views.LogoutApiView.as_view()),
 
-    path('batch-create/',views.BatchCreateView.as_view()),
+    path('batch-create/',views.BatchCreateListApiView.as_view()),
 
-    path('batch/<int:pk>/',views.BatchRetrieveUpdateDeleteView.as_view()),
-
-    path('batch/',views.BatchListView.as_view()),
+    path('batch/<int:pk>/',views.BatchUpdateRetriveDeleteApiView.as_view()),
     
-    path('subscriptions/', views.SubscriptionListCreateView.as_view(), name='subscription-list-create'),
+    path('subscriptions/', views.SubscriptionListCreateAPIView.as_view(), name='subscription-list-create'),
 
-    path('subscriptions/<int:pk>/', views.SubscriptionDetailView.as_view(), name='subscription-detail'),
+    path('subscriptions/<int:pk>/', views.SubscriptionRetrieveUpdateDestroyAPIView.as_view(), name='subscription-detail'),
 
     path('members/', views.MemberListCreateApiView.as_view(), name='member-list-create'),
     

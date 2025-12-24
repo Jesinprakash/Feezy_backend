@@ -88,7 +88,8 @@ class CategoryCreateApiView(generics.ListCreateAPIView):
 class ClientRegisterApiView(generics.ListCreateAPIView):
     serializer_class = ClientCreateSerializer
     queryset = Client.objects.all()
-    permission_classes = [permissions.IsAdminUser]  
+    permission_classes = [permissions.IsAdminUser] 
+    authentication_classes=[authentication.BasicAuthentication] 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)  
@@ -211,64 +212,92 @@ class ForgotPasswordApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class BatchCreateView(APIView):
+class BatchCreateListApiView(generics.ListCreateAPIView):
 
-    permissions_classess = [permissions.IsAuthenticated]
-    authentication_classes=[authentication.TokenAuthentication]
-    
-    def post(self,request):
-        serializer = BatchSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({
-                "message" : "Batch created",
-
-            })
-        return Response(
-            serializer.errors
-        )
-    
-class BatchRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-     
-     queryset=Batch.objects.all()
-
-     serializer_class=BatchSerializer
-
-     authentication_classes=[authentication.TokenAuthentication]
-
-     permission_classes=[permissions.IsAuthenticated]
-
-class BatchListView(generics.ListAPIView):
-    queryset = Batch.objects.all()
     serializer_class = BatchSerializer
-    permissions_classess = [permissions.IsAuthenticated]
+
+    # authentication_classes = [authentication.TokenAuthentication]
+
+    authentication_classes=[authentication.BasicAuthentication]
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        return Batch.objects.filter(client=self.request.user)
+
+    def perform_create(self, serializer):
+
+        serializer.save(client=self.request.user)
+
+
+class BatchUpdateRetriveDeleteApiView(generics.RetrieveUpdateDestroyAPIView):
+
+    serializer_class=BatchSerializer
+
     authentication_classes=[authentication.TokenAuthentication]
 
+    # authentication_classes=[authentication.BasicAuthentication]
 
-class SubscriptionListCreateView(generics.ListCreateAPIView):
-    queryset = Subscription.objects.all()
+
+    permission_classes=[permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        
+        return Batch.objects.filter(client=self.request.user)
+
+
+
+
+class SubscriptionListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = SubscriptionSerializer
-    permissions_classess = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[authentication.TokenAuthentication]
 
-class SubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permissions_classess = [permissions.IsAuthenticated]
-    authentication_classes=[authentication.TokenAuthentication]
-    queryset = Subscription.objects.all()
+    # authentication_classes=[authentication.BasicAuthentication]
+
+
+
+    def get_queryset(self):
+        return Subscription.objects.filter(client=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(client=self.request.user)
+
+
+class SubscriptionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [authentication.TokenAuthentication]
+
     serializer_class = SubscriptionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Subscription.objects.filter(client=self.request.user)
     
     
 class MemberListCreateApiView(generics.ListCreateAPIView):
     permissions_classess = [permissions.IsAuthenticated]
-    authentication_classes=[authentication.TokenAuthentication]
+    # authentication_classes=[authentication.TokenAuthentication]
+    authentication_classes=[authentication.BasicAuthentication]
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
+
+    def get_queryset(self):
+        # request.user IS Client
+        return Member.objects.filter(client=self.request.user)
+
+    def perform_create(self, serializer):
+        # auto-assign logged-in client
+        serializer.save(client=self.request.user)
 
 class MemberRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     permissions_classess = [permissions.IsAuthenticated]
     authentication_classes=[authentication.TokenAuthentication]
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
+
+    def get_queryset(self):
+        return Member.objects.filter(client=self.request.user)
  
  
 # bills of a particular member    
@@ -294,6 +323,13 @@ class PaymentListCreateView(generics.ListCreateAPIView):
     authentication_classes=[authentication.TokenAuthentication]
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    def get_queryset(self):
+        # request.user IS Client
+        return Payment.objects.filter(client=self.request.user)
+
+    def perform_create(self, serializer):
+        # auto-assign logged-in client
+        serializer.save(client=self.request.user)
 
 class PaymentDetailView(generics.RetrieveUpdateDestroyAPIView):
     permissions_classess = [permissions.IsAuthenticated]
