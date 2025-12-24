@@ -20,7 +20,7 @@ urlpatterns = [
 
     path('logout/',views.LogoutApiView.as_view()),
 
-    path('batch-create/',views.BatchCreateListApiView.as_view()),
+    path('batches/',views.BatchCreateListApiView.as_view()),
 
     path('batch/<int:pk>/',views.BatchUpdateRetriveDeleteApiView.as_view()),
     

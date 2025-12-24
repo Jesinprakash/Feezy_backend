@@ -217,6 +217,7 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = "__all__"
+        read_only_fields=['id','client']
         
         
   
@@ -327,6 +328,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Subscription
         fields = '__all__'
+        read_only_fields=['id','client']
 
 
 class BillSerializer(serializers.ModelSerializer):
@@ -347,6 +349,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['id','bill','amount','payment_method','payment_date']
+        read_only_fields=['id','client']
         
     def validate(self, attrs):
         bill = attrs.get('bill')
@@ -381,7 +384,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
             'remarks'
         ]
 
-        read_only_fields=["id","batch"]
+        read_only_fields=["id","batch",'client']
 
     def validate_date(self, value):
         if value > timezone.now().date():

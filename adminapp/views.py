@@ -89,7 +89,7 @@ class ClientRegisterApiView(generics.ListCreateAPIView):
     serializer_class = ClientCreateSerializer
     queryset = Client.objects.all()
     permission_classes = [permissions.IsAdminUser] 
-    authentication_classes=[authentication.BasicAuthentication] 
+    authentication_classes=[authentication.TokenAuthentication] 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)  
@@ -216,9 +216,9 @@ class BatchCreateListApiView(generics.ListCreateAPIView):
 
     serializer_class = BatchSerializer
 
-    # authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
 
-    authentication_classes=[authentication.BasicAuthentication]
+    # authentication_classes=[authentication.BasicAuthentication]
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -277,8 +277,8 @@ class SubscriptionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
     
 class MemberListCreateApiView(generics.ListCreateAPIView):
     permissions_classess = [permissions.IsAuthenticated]
-    # authentication_classes=[authentication.TokenAuthentication]
-    authentication_classes=[authentication.BasicAuthentication]
+    authentication_classes=[authentication.TokenAuthentication]
+    # authentication_classes=[authentication.BasicAuthentication]
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
 
